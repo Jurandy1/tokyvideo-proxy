@@ -3,9 +3,12 @@ const axios = require('axios');
 const app = express();
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Permite qualquer origem
-    res.header('Access-Control-Allow-Methods', 'GET'); // Métodos permitidos
-    res.header('Access-Control-Allow-Headers', 'Content-Type'); // Cabeçalhos permitidos
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
     next();
 });
 
@@ -13,7 +16,11 @@ app.get('/proxy', async (req, res) => {
     const videoUrl = req.query.url;
     try {
         const response = await axios.get(videoUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0' }
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Referer': 'https://www.tokyvideo.com/'
+            }
         });
         res.send(response.data);
     } catch (error) {
